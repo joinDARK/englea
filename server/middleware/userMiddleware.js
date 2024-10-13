@@ -1,7 +1,4 @@
-import jwt from "jsonwebtoken"
-import { generateAccessToken, verifyToken } from "../utils/jwtToken.js";
-
-const refreshTokens = [];
+import { verifyToken } from "../utils/jwtToken.js";
 
 const checkUser = (req, res, next) => {
   if (req.method === "OPTIONS") {
@@ -14,7 +11,7 @@ const checkUser = (req, res, next) => {
       return res.status(403).json("Not Authorizate User")
     }
     
-    const decodedData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const decoded = verifyToken({ token: token, secret: process.env.REFRESH_TOKEN_SECRET })
     if (!decoded) {
       return res.status(403).json({ message: 'Invalid or expired access token' });
     }
@@ -27,25 +24,4 @@ const checkUser = (req, res, next) => {
   }
 };
 
-const refreshToken = ({ token }) => {
-  if (req.method === "OPTIONS") {
-    next()
-  }
-  
-  if (!token || !refreshTokens.includes(token)) {
-      return res.status(403).json({ message: 'Invalid refresh token' })
-  }
-
-  const decoded = verifyToken({ token: token, secret: process.env.REFRESH_TOKEN_SECRET })
-  if (!decoded) {
-      return res.status(403).json({ message: 'Invalid or expired refresh token' })
-  }
-
-  const user = { id: decoded.id, login: decoded.login, role: decoded.role }
-  const newAccessToken = generateAccessToken(user)
-
-  req.user = newAccessToken
-  next()
-};
-
-export { checkUser, refreshToken }
+export { checkUser }

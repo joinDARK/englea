@@ -10,7 +10,7 @@ const generateAccessToken = ({ id, login, role }) => {
     role
   }
   
-  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '24h'})
+  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30m'})
 }
 
 const generateRefreshToken = ({ id, login, role }) => {

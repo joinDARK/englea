@@ -5,9 +5,6 @@ import { generateAccessToken, generateRefreshToken } from "../utils/jwtToken.js"
 
 const saltRounds = 7
 
-// Временное хранилище для refresh токенов
-
-
 class UserController {
   async registration(req, res) {
     try {
@@ -20,9 +17,8 @@ class UserController {
       const { login, password } = req.body
       const hashPassword = bcrypt.hashSync(password, saltRounds)
       
-      let newUser = await User.create({login: login, password: hashPassword})
-      
-      // Нужно исправить
+      let newUser = await User.create({ login: login, password: hashPassword })
+
       if(newUser) {
         res.status(201).json("Create")
       } else {
@@ -49,8 +45,8 @@ class UserController {
         return res.status(404).json("Invalid Password")
       }
       
-      const accesToken = generateAccessToken({ id: dataUser.id, login: dataUser.login, role: dataUser.role })
-      const refreshToken = generateRefreshToken({ id: dataUser.id, login: dataUser.login, role: dataUser.role })
+      const accesToken = generateAccessToken({id: dataUser.id, login: dataUser.login, role: dataUser.role})
+      const refreshToken = generateRefreshToken({id: dataUser.id, login: dataUser.login, role: dataUser.role})
 
       return res.status(201).json({ accesToken, refreshToken });
     } catch(e) {
@@ -67,7 +63,7 @@ class UserController {
         return res.status(400).json(errors)
       }
       
-      const { id } = req.query;
+      const { id } = req.user;
       const { login, password } = req.body;
       const hashPassword = bcrypt.hashSync(password, saltRounds)
       User.update({login: login, password: hashPassword, id: id})
@@ -80,8 +76,8 @@ class UserController {
   
   async deleteUser(req, res) {
     try {
-      const { login } = req.query;
-      User.delete({login: login})
+      const { id } = req.user;
+      User.delete({id: id})
       res.status(204).json("Delete");
     } catch(e) {
       console.log(e)

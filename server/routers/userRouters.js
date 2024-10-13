@@ -1,7 +1,7 @@
 import express from "express"
 import { check } from "express-validator"
 import UserController from "../controllers/userController.js"
-import { checkUser, refreshToken } from "../middleware/userMiddleware.js"
+import { checkUser } from "../middleware/userMiddleware.js"
 
 const userRouter = express.Router()
 
@@ -12,7 +12,7 @@ userRouter.post('/reg', [
   check("password", "Пароль должен быть от 8 до 14 символов").isLength({min: 8, max: 14})
 ], UserController.registration)
 
-userRouter.put('/', checkUser, UserController.updateInfo)
+userRouter.patch('/', checkUser, UserController.updateInfo)
 
 userRouter.delete('/', checkUser, UserController.deleteUser)
 
